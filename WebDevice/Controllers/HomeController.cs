@@ -74,6 +74,81 @@ namespace WebDevice.Controllers
             await AddDeviceAsync();
             return View();
         }
+        #region Demo3
+
+        public async Task<ActionResult> Demo3()
+        {
+            await AddDeviceAsync();
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> SendImage(string id, string key, string url)
+        {
+
+            var sentiment = await DetectLanguage(url);
+
+            dynamic sentimentConverted = JsonConvert.DeserializeObject(sentiment);
+
+            var commentDataPoint = new
+            {
+                deviceId = id,
+                comment = url,
+                faceRectangle = new
+                {
+                    left = sentimentConverted.JSON[0].faceRectangle.left,
+                    top = sentimentConverted.JSON[0].faceRectangle.top,
+                    width = sentimentConverted.JSON[0].faceRectangle.width,
+                    height = sentimentConverted.JSON[0].faceRectangle.height,
+                },
+                sentiment = new
+                {
+                    anger = sentimentConverted.JSON[0].scores.anger,
+                    contempt = sentimentConverted.JSON[0].scores.contempt,
+                    disgust = sentimentConverted.JSON[0].scores.disgust,
+                    fear = sentimentConverted.JSON[0].scores.fear,
+                    happiness = sentimentConverted.JSON[0].scores.happiness,
+                    neutral = sentimentConverted.JSON[0].scores.neutral,
+                    sadness = sentimentConverted.JSON[0].scores.sadness,
+                    surprise = sentimentConverted.JSON[0].scores.surprise
+                }
+            };
+
+            var commentString = JsonConvert.SerializeObject(commentDataPoint);
+            var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
+
+            var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
+
+            await deviceClient.SendEventAsync(message);
+
+            Response.StatusCode = 200; // OK = 200
+            return Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
+
+        }
+
+        static async Task<string> DetectEmotions(string url)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(BaseUrl);
+
+                // Request headers.
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", EmotionKey);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                // Request body. Insert your text data here in JSON format.
+                byte[] byteData = Encoding.UTF8.GetBytes("{\"url\":\"" + url + "\"}");
+
+                // Detect language:
+                var queryString = HttpUtility.ParseQueryString(string.Empty);
+                var uri = "emotion/v1.0/recognize?" + queryString;
+                var response = await CallEndpoint(client, uri, byteData);
+
+                return response;
+            }
+        }
+
+        #endregion
 
         [HttpGet]
         public async Task<ActionResult> SendComment(string id, string key, string value)
@@ -166,81 +241,7 @@ namespace WebDevice.Controllers
 
         #endregion
 
-        #region Demo3
-
-        public async Task<ActionResult> Demo3()
-        {
-            await AddDeviceAsync();
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> SendImage(string id, string key, string url)
-        {
-
-            var sentiment = await DetectLanguage(url);
-            
-            dynamic sentimentConverted = JsonConvert.DeserializeObject(sentiment);
-
-            var commentDataPoint = new
-            {
-                deviceId = id,
-                comment = url,
-                faceRectangle = new
-                {
-                    left = sentimentConverted.JSON[0].faceRectangle.left,
-                    top = sentimentConverted.JSON[0].faceRectangle.top,
-                    width = sentimentConverted.JSON[0].faceRectangle.width,
-                    height = sentimentConverted.JSON[0].faceRectangle.height,
-                },
-                sentiment = new
-                {
-                    anger = sentimentConverted.JSON[0].scores.anger,
-                    contempt = sentimentConverted.JSON[0].scores.contempt,
-                    disgust = sentimentConverted.JSON[0].scores.disgust,
-                    fear = sentimentConverted.JSON[0].scores.fear,
-                    happiness = sentimentConverted.JSON[0].scores.happiness,
-                    neutral = sentimentConverted.JSON[0].scores.neutral,
-                    sadness = sentimentConverted.JSON[0].scores.sadness,
-                    surprise = sentimentConverted.JSON[0].scores.surprise
-                }
-            };
-
-            var commentString = JsonConvert.SerializeObject(commentDataPoint);
-            var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
-
-            var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
-
-            await deviceClient.SendEventAsync(message);
-
-            Response.StatusCode = 200; // OK = 200
-            return Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
-
-        }
-
-        static async Task<string> DetectEmotions(string url)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(BaseUrl);
-
-                // Request headers.
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", EmotionKey);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                // Request body. Insert your text data here in JSON format.
-                byte[] byteData = Encoding.UTF8.GetBytes("{\"url\":\"" + url + "\"}");
-
-                // Detect language:
-                var queryString = HttpUtility.ParseQueryString(string.Empty);
-                var uri = "emotion/v1.0/recognize?" + queryString;
-                var response = await CallEndpoint(client, uri, byteData);
-
-                return response;
-            }
-        }
-
-        #endregion
+        
 
         #region Admin
 

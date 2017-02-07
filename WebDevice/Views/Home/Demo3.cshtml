@@ -41,7 +41,8 @@
         });
 
         function SendComment() {
-            var _value = $("#txtComment").val();
+            avar
+            _value = $("#txtComment").val();
             $('#btnSend').button('loading');
 
             $.ajax({
@@ -59,12 +60,6 @@
                     "<br />surprise: " + data.sentiment.surprise;
                 $("#results").html(res);
                 $('#btnSend').button('reset');
-            }).fail(function(jqXHR, textStatus) {
-                $("#results").html("An error occured");
-                $('#btnSend').button('reset');
-            });
-
-            window.onload = function() {
                 var c = document.getElementById("imageres");
                 var ctx = c.getContext("2d");
                 ctx.strokeStyle = "green";
@@ -73,7 +68,10 @@
                         ctx.rect(item.left, item.top, item.width, item.height);
                     });
                 ctx.stroke();
-            }
+            }).fail(function(jqXHR, textStatus) {
+                $("#results").html("An error occured");
+                $('#btnSend').button('reset');
+            });
 
         }
     });
