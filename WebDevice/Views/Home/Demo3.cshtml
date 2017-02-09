@@ -62,8 +62,9 @@
                 var c = document.getElementById("imageres");
                 var ctx = c.getContext("2d");
                 ctx.strokeStyle = "green";
-                var img = "<img src=\"" + data.comment + "\" />";
-                ctx.drawImage(img,0 , 0);
+                var img = new Image();
+                img.src = data.comment;
+                ctx.drawImage(img, 0, 0, 450, img.src.height * 450 / img.src.width);
                 data.faceRectangle.forEach(
                     function (item) {
                         ctx.rect(item.left, item.top, item.width, item.height);
