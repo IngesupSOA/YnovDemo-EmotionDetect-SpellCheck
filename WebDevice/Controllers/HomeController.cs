@@ -213,7 +213,7 @@ namespace WebDevice.Controllers
             await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            return Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
+            return Json(commentDataPoint);//, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
 
         }
 
