@@ -185,14 +185,14 @@ namespace WebDevice.Controllers
             {
                 deviceId = id,
                 comment = url,
-                faceRectangle = new
+                faceRectangle = sentimentConverted[0].faceRectangle/*new
                 {
                     left = sentimentConverted[0].faceRectangle.left,
                     top = sentimentConverted[0].faceRectangle.top,
                     width = sentimentConverted[0].faceRectangle.width,
                     height = sentimentConverted[0].faceRectangle.height,
-                },
-                sentiment = new
+                }*/,
+                scores = sentimentConverted[0].scores/*new
                 {
                     anger = sentimentConverted[0].scores.anger,
                     contempt = sentimentConverted[0].scores.contempt,
@@ -202,18 +202,18 @@ namespace WebDevice.Controllers
                     neutral = sentimentConverted[0].scores.neutral,
                     sadness = sentimentConverted[0].scores.sadness,
                     surprise = sentimentConverted[0].scores.surprise
-                }
+                }*/
             };
 
-            var commentString = JsonConvert.SerializeObject(commentDataPoint);
-            var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
+            //var commentString = JsonConvert.SerializeObject(commentDataPoint);
+            //var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
 
-            var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
+            //var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
 
-            await deviceClient.SendEventAsync(message);
+            //await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            return Json(commentDataPoint);//, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
+            return Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
 
         }
 
