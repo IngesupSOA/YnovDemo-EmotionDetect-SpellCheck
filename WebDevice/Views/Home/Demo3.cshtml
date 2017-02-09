@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-xs-12 h4">
-        <p>DDDDDDDDDDevice ID: @ViewData["id"]</p>
+        <p>Device ID: @ViewData["id"]</p>
         <p>Device Key: @ViewData["key"]</p>
     </div>
 
@@ -48,7 +48,7 @@
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
             }).done(function(data) {
-                var res = "<br/><img src=\"" + data.comment + "\" id=\"img\" style=\"hidden\"/>" +
+                var res = "<br/><img src=\"" + data.comment + "\" id=\"img\"/>" +
                     "<br /><canvas id=\"imageres\" width=\"450\" height=\"450\"></canvas>";
                     /*"<br />anger: " + data.scores.anger +
                     "<br />contempt: " + data.scores.contempt +
@@ -62,9 +62,12 @@
                 $('#btnSend').button('reset');
                 var c = document.getElementById("imageres");
                 var ctx = c.getContext("2d");
-                ctx.strokeStyle = "green";
                 var img = document.getElementById("img");
                 ctx.drawImage(img, 0, 0, 450, img.height * 450 / img.width);
+                context.beginPath();
+                ctx.strokeStyle = "green";
+                context.lineWidth = 3;
+                context.rect(5, 5, 20, 20);
                 data.faceRectangle.forEach(
                     function (item) {
                         ctx.rect(item.left, item.top, item.width, item.height);
