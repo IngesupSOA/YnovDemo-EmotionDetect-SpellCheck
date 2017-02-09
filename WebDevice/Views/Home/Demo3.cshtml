@@ -5,8 +5,8 @@
 
 <div class="row">
     <div class="col-xs-12 h4">
-        <p>Device ID: @ViewData["id"]</p>
-        <p>Device Key: @ViewData["key"]</p>
+        <p>FUCKINGDevice ID: @ViewData["id"]</p>
+        <p>SHITTYDevice Key: @ViewData["key"]</p>
     </div>
 
 </div>
@@ -64,10 +64,10 @@
                 var ctx = c.getContext("2d");
                 var img = document.getElementById("img");
                 ctx.drawImage(img, 0, 0, 450, img.height * 450 / img.width);
-                context.beginPath();
+                ctx.beginPath();
                 ctx.strokeStyle = "green";
-                context.lineWidth = 3;
-                context.rect(5, 5, 20, 20);
+                ctx.lineWidth = 3;
+                ctx.rect(5, 5, 20, 20);
                 data.faceRectangle.forEach(
                     function (item) {
                         ctx.rect(item.left, item.top, item.width, item.height);
