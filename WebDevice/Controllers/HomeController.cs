@@ -185,14 +185,14 @@ namespace WebDevice.Controllers
             {
                 deviceId = id,
                 comment = url,
-                faceRectangle = sentimentConverted[0].faceRectangle/*new
+                faceRectangle = new
                 {
                     left = sentimentConverted[0].faceRectangle.left,
                     top = sentimentConverted[0].faceRectangle.top,
                     width = sentimentConverted[0].faceRectangle.width,
                     height = sentimentConverted[0].faceRectangle.height,
-                }*/,
-                scores = sentimentConverted[0].scores/*new
+                },
+                scores = new
                 {
                     anger = sentimentConverted[0].scores.anger,
                     contempt = sentimentConverted[0].scores.contempt,
@@ -202,7 +202,7 @@ namespace WebDevice.Controllers
                     neutral = sentimentConverted[0].scores.neutral,
                     sadness = sentimentConverted[0].scores.sadness,
                     surprise = sentimentConverted[0].scores.surprise
-                }*/
+                }
             };
 
             //var commentString = JsonConvert.SerializeObject(commentDataPoint);

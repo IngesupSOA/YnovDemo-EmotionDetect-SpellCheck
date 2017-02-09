@@ -48,16 +48,15 @@
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
             }).done(function(data) {
-                var res = "<canvas id=\"imageres\"><img url=\"" + data.comment + "\"></canvas>" + "<br /><br />Detected emotion: <br />" +
-                    "<br />anger: " + data.scores.anger +
+                var res = "<canvas id=\"imageres\"><img src=\"" + data.comment + "\"></canvas>";
+                    /*"<br />anger: " + data.scores.anger +
                     "<br />contempt: " + data.scores.contempt +
                     "<br />disgust: " + data.scores.disgust +
                     "<br />fear: " + data.scores.fear +
                     "<br />happiness: " + data.scores.happiness +
                     "<br />neutral: " + data.scores.neutral +
                     "<br />sadness: " + data.scores.sadness +
-                    "<br />surprise: " + data.scores.surprise;
-                console.log("hahahahahahaha");
+                    "<br />surprise: " + data.scores.surprise;*/
                 $("#results").html(res);
                 $('#btnSend').button('reset');
                 var c = document.getElementById("imageres");
@@ -65,7 +64,6 @@
                 ctx.strokeStyle = "green";
                 data.faceRectangle.forEach(
                     function (item) {
-                        console.log("hello");
                         ctx.rect(item.left, item.top, item.width, item.height);
                     });
                 ctx.stroke();
