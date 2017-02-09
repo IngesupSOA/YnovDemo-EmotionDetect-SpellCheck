@@ -48,21 +48,21 @@
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, value: _value }
             }).done(function(data) {
-                var res = "<img url=\"" + data.JSON.comment + "\" id=\"imageres\">" + "<br /><br />Detected emotion: <br />" +
-                    "<br />anger: " + data.sentiment.anger +
-                    "<br />contempt: " + data.sentiment.contempt +
-                    "<br />disgust: " + data.sentiment.disgust +
-                    "<br />fear: " + data.sentiment.fear +
-                    "<br />happiness: " + data.sentiment.happiness +
-                    "<br />neutral: " + data.sentiment.neutral +
-                    "<br />sadness: " + data.sentiment.sadness +
-                    "<br />surprise: " + data.sentiment.surprise;
+                var res = "<img url=\"" + data[0].comment + "\" id=\"imageres\">" + "<br /><br />Detected emotion: <br />" +
+                    "<br />anger: " + data[0].scores.anger +
+                    "<br />contempt: " + data[0].scores.contempt +
+                    "<br />disgust: " + data[0].scores.disgust +
+                    "<br />fear: " + data[0].scores.fear +
+                    "<br />happiness: " + data[0].scores.happiness +
+                    "<br />neutral: " + data[0].scores.neutral +
+                    "<br />sadness: " + data[0].scores.sadness +
+                    "<br />surprise: " + data[0].scores.surprise;
                 $("#results").html(res);
                 $('#btnSend').button('reset');
                 var c = document.getElementById("imageres");
                 var ctx = c.getContext("2d");
                 ctx.strokeStyle = "green";
-                data.JSON.forEach(
+                data[0].faceRectangle.forEach(
                     function (item) {
                         console.log("hello");
                         ctx.rect(item.left, item.top, item.width, item.height);
