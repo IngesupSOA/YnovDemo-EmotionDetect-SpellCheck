@@ -48,7 +48,7 @@
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
             }).done(function(data) {
-                var res = "<canvas id=\"imageres\"></canvas>";
+                var res = "YEEEESSSS<br/><img src=\"" + data.comment + "\"/><br /><canvas id=\"imageres\"></canvas>";
                     /*"<br />anger: " + data.scores.anger +
                     "<br />contempt: " + data.scores.contempt +
                     "<br />disgust: " + data.scores.disgust +
@@ -65,11 +65,11 @@
                 var img = new Image();
                 img.src = data.comment;
                 ctx.drawImage(img, 0, 0, 450, img.src.height * 450 / img.src.width);
-                data.faceRectangle.forEach(
+                /*data.faceRectangle.forEach(
                     function (item) {
                         ctx.rect(item.left, item.top, item.width, item.height);
                     });
-                ctx.stroke();
+                ctx.stroke();*/
             }).fail(function(jqXHR, textStatus) {
                 $("#results").html("An error occured");
                 $('#btnSend').button('reset');
