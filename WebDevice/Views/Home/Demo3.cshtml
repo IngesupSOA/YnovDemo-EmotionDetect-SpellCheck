@@ -5,8 +5,8 @@
 
 <div class="row">
     <div class="col-xs-12 h4">
-        <p>FUCKINGDevice ID: @ViewData["id"]</p>
-        <p>SHITTYDevice Key: @ViewData["key"]</p>
+        <p>Device ID: @ViewData["id"]</p>
+        <p>Device Key: @ViewData["key"]</p>
     </div>
 
 </div>
@@ -60,18 +60,11 @@
                     "<br />surprise: " + data.scores.surprise;*/
                 $("#results").html(res);
                 $('#btnSend').button('reset');
-                var c = document.getElementById("imageres");
-                var ctx = c.getContext("2d");
-                var img = document.getElementById("img");
-                ctx.drawImage(img, 0, 0, 450, img.height * 450 / img.width);
-                ctx.beginPath();
-                ctx.strokeStyle = "green";
-                ctx.lineWidth = 3;
-                ctx.rect(5, 5, 20, 20);
-                data.faceRectangle.forEach(
+                console.log(data.faceRectangle.left);
+                /*data.faceRectangle.forEach(
                     function (item) {
                         ctx.rect(item.left, item.top, item.width, item.height);
-                    });
+                    });*/
                 ctx.stroke();
             }).fail(function(jqXHR, textStatus) {
                 $("#results").html("An error occured");
