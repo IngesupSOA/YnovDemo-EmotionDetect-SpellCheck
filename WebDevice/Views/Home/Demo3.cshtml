@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-xs-12 h4">
-        <p>DDDDDevice ID: @ViewData["id"]</p>
+        <p>Device ID: @ViewData["id"]</p>
         <p>Device Key: @ViewData["key"]</p>
     </div>
 
@@ -48,7 +48,7 @@
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
             }).done(function(data) {
-                var res = "<canvas id=\"imageres\"><img src=\"" + data.comment + "\"></canvas>";
+                var res = "<canvas id=\"imageres\"><img src=\"" + data.comment + "\" /></canvas>";
                     /*"<br />anger: " + data.scores.anger +
                     "<br />contempt: " + data.scores.contempt +
                     "<br />disgust: " + data.scores.disgust +
