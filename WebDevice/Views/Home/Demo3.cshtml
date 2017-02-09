@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-xs-12 h4">
-        <p>Device ID: @ViewData["id"]</p>
+        <p>DDDDDevice ID: @ViewData["id"]</p>
         <p>Device Key: @ViewData["key"]</p>
     </div>
 
@@ -48,7 +48,7 @@
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
             }).done(function(data) {
-                var res = "<img url=\"" + data.comment + "\" id=\"imageres\">" + "<br /><br />Detected emotion: <br />" +
+                var res = "<canvas id=\"imageres\"><img url=\"" + data.comment + "\"></canvas>" + "<br /><br />Detected emotion: <br />" +
                     "<br />anger: " + data.scores.anger +
                     "<br />contempt: " + data.scores.contempt +
                     "<br />disgust: " + data.scores.disgust +
@@ -57,6 +57,7 @@
                     "<br />neutral: " + data.scores.neutral +
                     "<br />sadness: " + data.scores.sadness +
                     "<br />surprise: " + data.scores.surprise;
+                console.log("hahahahahahaha");
                 $("#results").html(res);
                 $('#btnSend').button('reset');
                 var c = document.getElementById("imageres");
