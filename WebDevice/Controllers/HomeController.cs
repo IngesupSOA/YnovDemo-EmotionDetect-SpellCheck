@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace WebDevice.Controllers
 {
@@ -185,8 +186,7 @@ namespace WebDevice.Controllers
             {
                 deviceId = id,
                 comment = url,
-                faceRectangle = new
-                {
+                faceRectangle = new {
                     left = sentimentConverted[0].faceRectangle.left,
                     top = sentimentConverted[0].faceRectangle.top,
                     width = sentimentConverted[0].faceRectangle.width,
