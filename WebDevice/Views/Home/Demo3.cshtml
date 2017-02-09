@@ -69,7 +69,7 @@
                     });
                 ctx.stroke();
             }).fail(function(jqXHR, textStatus) {
-                $("#results").html("An error occured");
+                $("#results").html("An error occured" + textStatus);
                 $('#btnSend').button('reset');
             });
 
