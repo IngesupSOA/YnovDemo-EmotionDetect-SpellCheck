@@ -48,7 +48,7 @@
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
             }).done(function(data) {
-                var res = "YEEEESSSS<br/><img src=\"" + data.comment + "\"/><br /><canvas id=\"imageres\"></canvas>";
+                var res = "YEEEESSSS<br/><img src=\"" + data.comment + "\"/><br /><canvas id=\"imageres\" width=\"450\" height=\"450\"></canvas>";
                     /*"<br />anger: " + data.scores.anger +
                     "<br />contempt: " + data.scores.contempt +
                     "<br />disgust: " + data.scores.disgust +
@@ -64,7 +64,7 @@
                 ctx.strokeStyle = "green";
                 var img = new Image();
                 img.src = data.comment;
-                ctx.drawImage(img, 0, 0, 450, img.src.height * 450 / img.src.width);
+                ctx.drawImage(img, 0, 0, 450, img.height * 450 / img.width);
                 /*data.faceRectangle.forEach(
                     function (item) {
                         ctx.rect(item.left, item.top, item.width, item.height);
