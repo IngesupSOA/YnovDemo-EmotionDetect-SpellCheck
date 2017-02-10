@@ -60,12 +60,15 @@
                     "<br />surprise: " + data.scores.surprise;*/
                 $("#results").html(res);
                 $('#btnSend').button('reset');
-                console.log(data.faceRectangle.left);
+                console.log(data);
+                $.each(data, function(index, value) {
+                    console.log(value);
+                });
                 /*data.faceRectangle.forEach(
                     function (item) {
                         ctx.rect(item.left, item.top, item.width, item.height);
                     });*/
-                ctx.stroke();
+                //ctx.stroke();
             }).fail(function(jqXHR, textStatus) {
                 $("#results").html("An error occured");
                 $('#btnSend').button('reset');
