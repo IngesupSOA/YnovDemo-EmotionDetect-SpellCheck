@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web;
 using System.Globalization;
+using WebDevice.Models;
 
 namespace WebDevice.Controllers
 {
@@ -180,7 +182,7 @@ namespace WebDevice.Controllers
 
             var sentiment = await DetectEmotions(url);
 
-            dynamic sentimentConverted = JsonConvert.DeserializeObject(sentiment);
+            dynamic sentimentConverted = JsonConvert.DeserializeObject<IEnumerable<Emotion>>(sentiment);
 
             var commentDataPoint = new
             {
@@ -208,7 +210,8 @@ namespace WebDevice.Controllers
             //await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            return sentimentConverted.ToString();//Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
+            return sentimentConverted;
+                //Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
 
         }
 
