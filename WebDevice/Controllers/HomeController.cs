@@ -11,7 +11,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web;
 using System.Globalization;
-using System.Collections.Generic;
 
 namespace WebDevice.Controllers
 {
@@ -19,12 +18,11 @@ namespace WebDevice.Controllers
     {
 
         private static RegistryManager registryManager;
-        private static string iotHubConnectionString = ConfigurationManager.AppSettings["iotHubConnectionString"]; 
+        private static string iotHubConnectionString = ConfigurationManager.AppSettings["iotHubConnectionString"];
         private string iotHubUri = ConfigurationManager.AppSettings["iotHubUri"];
 
         private const string BaseUrl = "https://westus.api.cognitive.microsoft.com/";
         private static string AccountKey = ConfigurationManager.AppSettings["textAnalyticsKey"];
-        private static string EmotionKey = ConfigurationManager.AppSettings["emotionKey"];
         private const int NumLanguages = 1;
 
         static HomeController()
@@ -48,7 +46,7 @@ namespace WebDevice.Controllers
 
         [HttpGet]
         public async Task<ActionResult> SendMessage(string id, string key, int value)
-        {            
+        {
             var telemetryDataPoint = new
             {
                 deviceId = id,
@@ -63,7 +61,7 @@ namespace WebDevice.Controllers
             await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            return null;    
+            return null;
         }
 
         #endregion
@@ -101,10 +99,10 @@ namespace WebDevice.Controllers
             var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
 
             await deviceClient.SendEventAsync(message);
-        
+
             Response.StatusCode = 200; // OK = 200
             return Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
-            
+
         }
 
         static async Task<string> DetectLanguage(string comment)
@@ -128,7 +126,7 @@ namespace WebDevice.Controllers
                 var uri = "text/analytics/v2.0/languages?" + queryString;
                 var response = await CallEndpoint(client, uri, byteData);
 
-                return response;              
+                return response;
             }
         }
 
@@ -164,6 +162,7 @@ namespace WebDevice.Controllers
                 return await response.Content.ReadAsStringAsync();
             }
         }
+
         #endregion
 
         #region Demo3
