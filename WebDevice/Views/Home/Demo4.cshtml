@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-xs-12 h4">
-        <p>DDDDDDDDDDDDevice ID: @ViewData["id"]</p>
+        <p>Device ID: @ViewData["id"]</p>
         <p>Device Key: @ViewData["key"]</p>
     </div>
 
@@ -45,8 +45,8 @@
             $('#btnSend').button('loading');
 
             $.ajax({
-                url: '/Home/SendImage/',
-                data: { id: deviceId, key: deviceKey, url: _value }
+                url: '/Home/SendText/',
+                data: { id: deviceId, key: deviceKey, txt: _value }
             }).done(function (data) {
                 var res = "Yes!";
                 //var res = "<br/><img src=\"" + data.comment + "\" id=\"img\"/>";
@@ -58,20 +58,10 @@
                     "<br />neutral: " + data.scores.neutral +
                     "<br />sadness: " + data.scores.sadness +
                     "<br />surprise: " + data.scores.surprise;*/
-                $("#results").html(res);
+                $("#results").html(data);
                 $('#btnSend').button('reset');
                 console.log("Data : ");
                 console.log(data);
-                console.log("");
-                console.log("Each :");
-                $.each(data, function(index, value) {
-                    console.log(value);
-                });
-                /*data.faceRectangle.forEach(
-                    function (item) {
-                        ctx.rect(item.left, item.top, item.width, item.height);
-                    });*/
-                //ctx.stroke();
             }).fail(function(jqXHR, textStatus) {
                 $("#results").html("An error occured");
                 $('#btnSend').button('reset');

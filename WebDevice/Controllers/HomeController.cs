@@ -26,6 +26,7 @@ namespace WebDevice.Controllers
         private const string BaseUrl = "https://westus.api.cognitive.microsoft.com/";
         private static string AccountKey = ConfigurationManager.AppSettings["textAnalyticsKey"];
         private static string EmotionKey = ConfigurationManager.AppSettings["emotionKey"];
+        private static string BingSpellKey = ConfigurationManager.AppSettings["bingSpellKey"];
         private const int NumLanguages = 1;
 
         static HomeController()
@@ -156,16 +157,6 @@ namespace WebDevice.Controllers
             }
         }
 
-        static async Task<String> CallEndpoint(HttpClient client, string uri, byte[] byteData)
-        {
-            using (var content = new ByteArrayContent(byteData))
-            {
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = await client.PostAsync(uri, content);
-                return await response.Content.ReadAsStringAsync();
-            }
-        }
-
         #endregion
 
         #region Demo3
@@ -182,7 +173,7 @@ namespace WebDevice.Controllers
 
             var sentiment = await DetectEmotions(url);
 
-            dynamic sentimentConverted = JsonConvert.DeserializeObject<IEnumerable<Emotion>>(sentiment);
+            dynamic sentimentConverted = JsonConvert.DeserializeObject<EmotionModel>(sentiment);
 
             var commentDataPoint = new
             {
@@ -231,23 +222,70 @@ namespace WebDevice.Controllers
                 // Detect language:
                 var queryString = HttpUtility.ParseQueryString(string.Empty);
                 var uri = "emotion/v1.0/recognize?" + queryString;
-                var response = await CallEndpoint2(client, uri, byteData);
+                var response = await CallEndpoint(client, uri, byteData);
 
                 return response;
-            }
-        }
-        static async Task<String> CallEndpoint2(HttpClient client, string uri, byte[] byteData)
-        {
-            using (var content = new ByteArrayContent(byteData))
-            {
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = await client.PostAsync(uri, content);
-                return await response.Content.ReadAsStringAsync();
             }
         }
 
         #endregion
 
+        #region Demo4
+
+        public async Task<ActionResult> Demo4()
+        {
+            await AddDeviceAsync();
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<string> SendText(string id, string key, string txt)
+        {
+
+            var corrected = await CorrectText(txt);
+
+            dynamic check = JsonConvert.DeserializeObject(corrected);
+            string correctedText = txt;
+
+            foreach (dynamic correction in check.flaggedTokens) {
+                correctedText.Replace(correction.token.ToString(), correction.suggestions[0].suggestion.ToString());
+            }
+
+            //var commentString = JsonConvert.SerializeObject(commentDataPoint);
+            //var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
+
+            //var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
+
+            //await deviceClient.SendEventAsync(message);
+
+            Response.StatusCode = 200; // OK = 200
+            return correctedText;
+
+        }
+
+        static async Task<string> CorrectText(string txt)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(BaseUrl);
+
+                // Request headers.
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", BingSpellKey);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+
+                // Request body. Insert your text data here in JSON format.
+                byte[] byteData = Encoding.UTF8.GetBytes("Text=" + txt);
+
+                // Detect language:
+                var queryString = HttpUtility.ParseQueryString(string.Empty);
+                var uri = "https://api.cognitive.microsoft.com/bing/v5.0/spellcheck" + queryString;
+                var response = await CallEndpointForm(client, uri, byteData);
+
+                return response;
+            }
+        }
+
+        #endregion
 
 
         #region Admin
@@ -294,6 +332,26 @@ namespace WebDevice.Controllers
             if (devices.Count<Device>() > 0)
                 await registryManager.RemoveDevices2Async(devices);
 
+        }
+
+        static async Task<String> CallEndpoint(HttpClient client, string uri, byte[] byteData)
+        {
+            using (var content = new ByteArrayContent(byteData))
+            {
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = await client.PostAsync(uri, content);
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+        static async Task<String> CallEndpointForm(HttpClient client, string uri, byte[] byteData)
+        {
+            using (var content = new ByteArrayContent(byteData))
+            {
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                var response = await client.PostAsync(uri, content);
+                return await response.Content.ReadAsStringAsync();
+            }
         }
 
         #endregion
