@@ -186,23 +186,18 @@ namespace WebDevice.Controllers
             {
                 deviceId = id,
                 comment = url,
-                faceRectangle = new {
-                    left = sentimentConverted.faceRectangle.left,
-                    top = sentimentConverted.faceRectangle.top,
-                    width = sentimentConverted.faceRectangle.width,
-                    height = sentimentConverted.faceRectangle.height,
-                },
-                scores = new
-                {
-                    anger = sentimentConverted.scores.anger,
-                    contempt = sentimentConverted.scores.contempt,
-                    disgust = sentimentConverted.scores.disgust,
-                    fear = sentimentConverted.scores.fear,
-                    happiness = sentimentConverted.scores.happiness,
-                    neutral = sentimentConverted.scores.neutral,
-                    sadness = sentimentConverted.scores.sadness,
-                    surprise = sentimentConverted.scores.surprise
-                }
+                faceRectangleleft = sentimentConverted[0].faceRectangle.left,
+                faceRectangletop = sentimentConverted[0].faceRectangle.top,
+                faceRectanglewidth = sentimentConverted[0].faceRectangle.width,
+                faceRectangleheight = sentimentConverted[0].faceRectangle.height,
+                scoresanger = sentimentConverted[0].scores.anger,
+                scorescontempt = sentimentConverted[0].scores.contempt,
+                scoresdisgust = sentimentConverted[0].scores.disgust,
+                scoresfear = sentimentConverted[0].scores.fear,
+                scoreshappiness = sentimentConverted[0].scores.happiness,
+                scoresneutral = sentimentConverted[0].scores.neutral,
+                scoressadness = sentimentConverted[0].scores.sadness,
+                scoressurprise = sentimentConverted[0].scores.surprise
             };
 
             //var commentString = JsonConvert.SerializeObject(commentDataPoint);
