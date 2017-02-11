@@ -182,7 +182,7 @@ namespace WebDevice.Controllers
 
             dynamic sentimentConverted = JsonConvert.DeserializeObject(sentiment);
 
-            /*var commentDataPoint = new
+            var commentDataPoint = new
             {
                 deviceId = id,
                 comment = url,
@@ -198,7 +198,7 @@ namespace WebDevice.Controllers
                 scoresneutral = sentimentConverted[0].scores.neutral,
                 scoressadness = sentimentConverted[0].scores.sadness,
                 scoressurprise = sentimentConverted[0].scores.surprise
-            };*/
+            };
 
             //var commentString = JsonConvert.SerializeObject(commentDataPoint);
             //var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
@@ -208,8 +208,7 @@ namespace WebDevice.Controllers
             //await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            return sentimentConverted;
-                //Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
+            return sentimentConverted.ToString();//Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
 
         }
 
