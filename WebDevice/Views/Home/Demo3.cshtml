@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-xs-12 h4">
-        <p>Deeeeeeeeeeeeeeeeeeeevice ID: @ViewData["id"]</p>
+        <p>Device ID: @ViewData["id"]</p>
         <p>Device Key: @ViewData["key"]</p>
     </div>
 
@@ -47,8 +47,9 @@
             $.ajax({
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
-            }).done(function(data) {
-                var res = "<br/><img src=\"" + data.comment + "\" id=\"img\"/>";
+            }).done(function (data) {
+                var res = "Yes!"
+                //var res = "<br/><img src=\"" + data.comment + "\" id=\"img\"/>";
                     /*"<br />anger: " + data.scores.anger +
                     "<br />contempt: " + data.scores.contempt +
                     "<br />disgust: " + data.scores.disgust +
