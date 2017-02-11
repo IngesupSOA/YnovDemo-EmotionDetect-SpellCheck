@@ -48,8 +48,7 @@
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
             }).done(function(data) {
-                var res = "<br/><img src=\"" + data.comment + "\" id=\"img\"/>" +
-                    "<br /><canvas id=\"imageres\" width=\"450\" height=\"450\"></canvas>";
+                var res = "<br/><img src=\"" + data.comment + "\" id=\"img\"/>";
                     /*"<br />anger: " + data.scores.anger +
                     "<br />contempt: " + data.scores.contempt +
                     "<br />disgust: " + data.scores.disgust +
@@ -60,7 +59,10 @@
                     "<br />surprise: " + data.scores.surprise;*/
                 $("#results").html(res);
                 $('#btnSend').button('reset');
+                console.log("Data : ");
                 console.log(data);
+                console.log("");
+                console.log("Each :");
                 $.each(data, function(index, value) {
                     console.log(value);
                 });

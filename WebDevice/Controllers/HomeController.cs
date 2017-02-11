@@ -23,6 +23,7 @@ namespace WebDevice.Controllers
 
         private const string BaseUrl = "https://westus.api.cognitive.microsoft.com/";
         private static string AccountKey = ConfigurationManager.AppSettings["textAnalyticsKey"];
+        private static string EmotionKey = ConfigurationManager.AppSettings["emotionKey"];
         private const int NumLanguages = 1;
 
         static HomeController()
@@ -185,22 +186,17 @@ namespace WebDevice.Controllers
             {
                 deviceId = id,
                 comment = url,
-                faceRectangle = new {
-                    left = sentimentConverted[0].faceRectangle.left,
-                    top = sentimentConverted[0].faceRectangle.top,
-                    width = sentimentConverted[0].faceRectangle.width,
-                    height = sentimentConverted[0].faceRectangle.height,
-                },
+                faceRectangle = sentimentConverted.faceRectangle.left,
                 scores = new
                 {
-                    anger = sentimentConverted[0].scores.anger,
-                    contempt = sentimentConverted[0].scores.contempt,
-                    disgust = sentimentConverted[0].scores.disgust,
-                    fear = sentimentConverted[0].scores.fear,
-                    happiness = sentimentConverted[0].scores.happiness,
-                    neutral = sentimentConverted[0].scores.neutral,
-                    sadness = sentimentConverted[0].scores.sadness,
-                    surprise = sentimentConverted[0].scores.surprise
+                    anger = sentimentConverted.scores.anger,
+                    contempt = sentimentConverted.scores.contempt,
+                    disgust = sentimentConverted.scores.disgust,
+                    fear = sentimentConverted.scores.fear,
+                    happiness = sentimentConverted.scores.happiness,
+                    neutral = sentimentConverted.scores.neutral,
+                    sadness = sentimentConverted.scores.sadness,
+                    surprise = sentimentConverted.scores.surprise
                 }
             };
 
