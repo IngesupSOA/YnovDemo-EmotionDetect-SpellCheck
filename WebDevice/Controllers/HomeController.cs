@@ -186,7 +186,12 @@ namespace WebDevice.Controllers
             {
                 deviceId = id,
                 comment = url,
-                faceRectangle = sentimentConverted.faceRectangle.left,
+                faceRectangle = new {
+                    left = sentimentConverted.faceRectangle.left,
+                    top = sentimentConverted.faceRectangle.top,
+                    width = sentimentConverted.faceRectangle.width,
+                    height = sentimentConverted.faceRectangle.height,
+                },
                 scores = new
                 {
                     anger = sentimentConverted.scores.anger,
