@@ -239,17 +239,17 @@ namespace WebDevice.Controllers
         }
 
         [HttpGet]
-        public async Task<string> SendText(string id, string key, string txt)
+        public async Task<ActionResult> SendText(string id, string key, string txt)
         {
 
             var corrected = await CorrectText(txt);
 
-            dynamic check = JsonConvert.DeserializeObject(corrected);
+            dynamic check = JsonConvert.DeserializeObject<SpellCheckModel>(corrected);
             string correctedText = txt;
 
-            foreach (dynamic correction in check.flaggedTokens) {
+            /*foreach (dynamic correction in check.flaggedTokens) {
                 correctedText.Replace(correction.token.ToString(), correction.suggestions[0].suggestion.ToString());
-            }
+            }*/
 
             //var commentString = JsonConvert.SerializeObject(commentDataPoint);
             //var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
@@ -259,8 +259,8 @@ namespace WebDevice.Controllers
             //await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            return correctedText;
-
+            //return check;
+            return Json(check, JsonRequestBehavior.AllowGet);
         }
 
         static async Task<string> CorrectText(string txt)
