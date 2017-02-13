@@ -5,12 +5,9 @@ using System.Web;
 
 namespace WebDevice.Models
 {
-    public class SpellCheckModel
+    public class APIModels
     {
         public string _type { get; set; }
-        public string SpellCheck { get; set; }
-        public string webSearchUrl { get; set; }
-        public int totalEstimatedMatches { get; set; }
 
         public IEnumerable<FlaggedToken> flaggedTokens { get; set; }
     }

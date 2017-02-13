@@ -10,6 +10,18 @@
     border-color: red;
 }
 
+.faceinfo {
+    position: absolute;
+    background-color: black;
+    color: #ffffff;
+    height: auto;
+    padding: 5px;
+    display: none;
+    z-index: 100;
+    font-size: 10px;
+    opacity: 0.85;
+}
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;

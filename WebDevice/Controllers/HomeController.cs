@@ -168,30 +168,18 @@ namespace WebDevice.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> SendImage(string id, string key, string url)
+        public async Task<string> SendText(string id, string key, string txt)
         {
+            var corrected = await CorrectText(txt);
 
-            var sentiment = await DetectEmotions(url);
+            /*APIModels check = JsonConvert.DeserializeObject<APIModels>(corrected);
+            string correctedText = txt;
 
-            dynamic sentimentConverted = JsonConvert.DeserializeObject<EmotionModel>(sentiment);
-
-            var commentDataPoint = new
+            foreach (FlaggedToken correction in check.flaggedTokens)
             {
-                deviceId = id,
-                comment = url,
-                faceRectangleleft = sentimentConverted[0].faceRectangle.left,
-                faceRectangletop = sentimentConverted[0].faceRectangle.top,
-                faceRectanglewidth = sentimentConverted[0].faceRectangle.width,
-                faceRectangleheight = sentimentConverted[0].faceRectangle.height,
-                scoresanger = sentimentConverted[0].scores.anger,
-                scorescontempt = sentimentConverted[0].scores.contempt,
-                scoresdisgust = sentimentConverted[0].scores.disgust,
-                scoresfear = sentimentConverted[0].scores.fear,
-                scoreshappiness = sentimentConverted[0].scores.happiness,
-                scoresneutral = sentimentConverted[0].scores.neutral,
-                scoressadness = sentimentConverted[0].scores.sadness,
-                scoressurprise = sentimentConverted[0].scores.surprise
-            };
+                correctedText = correctedText.Replace(correction.token, correction.suggestions.ToList()[0].suggestion);
+                Console.WriteLine(correction.suggestions.ToList()[0].suggestion);
+            }*/
 
             //var commentString = JsonConvert.SerializeObject(commentDataPoint);
             //var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
@@ -201,8 +189,64 @@ namespace WebDevice.Controllers
             //await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            return sentimentConverted;
-                //Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
+            //return correctedText;
+            //return Json(check, JsonRequestBehavior.AllowGet);
+            //return JsonConvert.SerializeObject(check.flaggedTokens);
+            return corrected;
+        }
+
+        static async Task<string> CorrectText(string txt)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(BaseUrl);
+
+                // Request headers.
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", BingSpellKey);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+
+                // Request body. Insert your text data here in JSON format.
+                byte[] byteData = Encoding.UTF8.GetBytes("Text=" + txt);
+
+                // Detect language:
+                var queryString = HttpUtility.ParseQueryString(string.Empty);
+                var uri = "https://api.cognitive.microsoft.com/bing/v5.0/spellcheck/?text=" + txt;
+                //var response = await CallEndpointForm(client, uri, byteData);
+
+
+                var response = await client.GetAsync(uri);
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+        #endregion
+
+        #region Demo4
+
+        public async Task<ActionResult> Demo4()
+        {
+            await AddDeviceAsync();
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<string> SendImage(string id, string key, string url)
+        {
+
+            var sentiment = await DetectEmotions(url);
+
+            //dynamic sentimentConverted = JsonConvert.DeserializeObject<EmotionModel>(sentiment);
+
+            //var commentString = JsonConvert.SerializeObject(commentDataPoint);
+            var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(sentiment));
+
+            var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
+
+            await deviceClient.SendEventAsync(message);
+
+            Response.StatusCode = 200; // OK = 200
+            return sentiment;
+            //Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
 
         }
 
@@ -227,64 +271,6 @@ namespace WebDevice.Controllers
                 return response;
             }
         }
-
-        #endregion
-
-        #region Demo4
-
-        public async Task<ActionResult> Demo4()
-        {
-            await AddDeviceAsync();
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> SendText(string id, string key, string txt)
-        {
-
-            var corrected = await CorrectText(txt);
-
-            dynamic check = JsonConvert.DeserializeObject<SpellCheckModel>(corrected);
-            string correctedText = txt;
-
-            /*foreach (dynamic correction in check.flaggedTokens) {
-                correctedText.Replace(correction.token.ToString(), correction.suggestions[0].suggestion.ToString());
-            }*/
-
-            //var commentString = JsonConvert.SerializeObject(commentDataPoint);
-            //var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
-
-            //var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
-
-            //await deviceClient.SendEventAsync(message);
-
-            Response.StatusCode = 200; // OK = 200
-            //return check;
-            return Json(check, JsonRequestBehavior.AllowGet);
-        }
-
-        static async Task<string> CorrectText(string txt)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(BaseUrl);
-
-                // Request headers.
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", BingSpellKey);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-
-                // Request body. Insert your text data here in JSON format.
-                byte[] byteData = Encoding.UTF8.GetBytes("Text=" + txt);
-
-                // Detect language:
-                var queryString = HttpUtility.ParseQueryString(string.Empty);
-                var uri = "https://api.cognitive.microsoft.com/bing/v5.0/spellcheck" + queryString;
-                var response = await CallEndpointForm(client, uri, byteData);
-
-                return response;
-            }
-        }
-
         #endregion
 
 

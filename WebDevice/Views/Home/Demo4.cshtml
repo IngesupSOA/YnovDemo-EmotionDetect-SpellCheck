@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Demo 3";
+    ViewBag.Title = "Demo 4";
 }
 <h2>@ViewBag.Title</h2>
 
@@ -13,16 +13,18 @@
 
 <div class="row">
     <div class="col-xs-8">
-        <textarea id="txtComment" rows="2" cols="50" maxlength="100"></textarea><br />
+        <textarea id="txtComment" rows="2" cols="50"></textarea><br/>
 
 
         <button type="button" class="btn btn-primary btn-lg " id="btnSend" data-loading-text="<i class='glyphicon glyphicon-refresh glyphicon-spin'></i> Thinking...">Analyze Text</button>
     </div>
 </div>
-<br />
+<hr />
+<br/>
 <div class="row">
-    <div class="col-xs-12">
-        <div id="results"></div>
+    <div class="col-xs-12" style="display: inline-block;">
+        <div id="results" width="500px" style="display: inline-block; position: absolute;">
+        </div>
     </div>
 </div>
 
@@ -47,31 +49,49 @@
             $.ajax({
                 url: '/Home/SendImage/',
                 data: { id: deviceId, key: deviceKey, url: _value }
-            }).done(function (data) {
-                var res = "Yes!";
-                //var res = "<br/><img src=\"" + data.comment + "\" id=\"img\"/>";
-                    /*"<br />anger: " + data.scores.anger +
-                    "<br />contempt: " + data.scores.contempt +
-                    "<br />disgust: " + data.scores.disgust +
-                    "<br />fear: " + data.scores.fear +
-                    "<br />happiness: " + data.scores.happiness +
-                    "<br />neutral: " + data.scores.neutral +
-                    "<br />sadness: " + data.scores.sadness +
-                    "<br />surprise: " + data.scores.surprise;*/
-                $("#results").html(res);
+            }).done(function(data) {
+                //var res = "<br/><img id=\"imgres\" src=\"" + $("#txtComment").val() + "\" id=\"img\" width=\"450\"/>";
+                var img = new Image();
+                $("#results").html(img);
                 $('#btnSend').button('reset');
-                console.log("Data : ");
-                console.log(data);
-                console.log("");
-                console.log("Each :");
-                $.each(data, function(index, value) {
-                    console.log(value);
-                });
-                /*data.faceRectangle.forEach(
-                    function (item) {
-                        ctx.rect(item.left, item.top, item.width, item.height);
-                    });*/
-                //ctx.stroke();
+                var data = JSON.parse(data);
+                $("#results").width = 500;
+                var subcontainer = $("<div id=\"resultscontainer\" width=\"500px\" style=\"display: solid;\"></div>");
+                $("#results").append(subcontainer);
+                var i = 0;
+                img.onload = function() {
+                    $.each(data, function (index, value) {
+                        var div = $("<div class=\"labelbox\" onmouseover=\"showFaceInfo(" + i + ")\" onmouseout=\"hideFaceInfo(" + i + ")\" style=\"" +
+                            "top:" + (parseInt(value.faceRectangle.top) / ((img.naturalWidth / 500) * img.height)) * 100 + "%;" +
+                            "left:" + (parseInt(value.faceRectangle.left) / ((img.naturalWidth / 500) * img.width)) * 100 + "%;" +
+                            "width:" + (parseInt(value.faceRectangle.width) / ((img.naturalWidth / 500) * img.width)) * 100 + "%;" +
+                            "height:" + (parseInt(value.faceRectangle.height) / ((img.naturalWidth / 500) * img.height)) * 100 + "%;\"></div>");
+
+                        var faceInfo = $('<span class="faceinfo" id="face' + i + '"' +
+                            'style="top: ' + ((parseInt(value.faceRectangle.top) + parseInt(value.faceRectangle.height))
+                            / ((img.naturalWidth / 500) * img.height)) * 100 +
+                            '%; left: ' + ((parseInt(value.faceRectangle.left) + parseInt(value.faceRectangle.width))
+                            / ((img.naturalWidth / 500) * img.width)) * 100 +
+                            '%; display: none;">' +
+                            '<span data-type="tiparrow" class="tiparrowleft" style="top: 91.5px;"></span>' +
+                            '<span class="facecode">' +
+                            '<p><span>Anger : </span>' + parseFloat(value.scores.anger).toFixed(4) + '</p>' +
+                            '<p><span>Contempt : </span>' + parseFloat(value.scores.contempt).toFixed(4) + '</p>' +
+                            '<p><span>Disgust : </span>' + parseFloat(value.scores.disgust).toFixed(4) + '</p>' +
+                            '<p><span>Fear : </span>' + parseFloat(value.scores.fear).toFixed(4) + '</p>' +
+                            '<p><span>Happiness : </span>' + parseFloat(value.scores.happiness).toFixed(4) + '</p>' +
+                            '<p><span>Neutral : </span>' + parseFloat(value.scores.neutral).toFixed(4) + '</p>' +
+                            '<p><span>Sadness : </span>' + parseFloat(value.scores.sadness).toFixed(4) + '</p>' +
+                            '<p><span>Surprise : </span>' + parseFloat(value.scores.surprise).toFixed(4) + '</p>' +
+                            '</span></span>');
+                        subcontainer.append(faceInfo);
+                        subcontainer.append(div);
+                        i = i + 1;
+                    });
+                };
+                img.width = 500;
+                img.src = $("#txtComment").val();
+                subcontainer.height = img.height;
             }).fail(function(jqXHR, textStatus) {
                 $("#results").html("An error occured");
                 $('#btnSend').button('reset');
@@ -79,4 +99,11 @@
 
         }
     });
+
+    function showFaceInfo(id) {
+        $('#face' + id).css("display", "block");
+    }
+    function hideFaceInfo(id) {
+        $('#face' + id).css("display", "none");
+    }
 </script>
