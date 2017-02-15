@@ -20,6 +20,7 @@
                     alert('All devices are deleted');
                 }).fail(function (jqXHR, textStatus) {
                     alert('Something went wrong');
+                    console.log(jqXHR);
                 });
             });
         });
