@@ -1,14 +1,23 @@
 ﻿@{
     ViewBag.Title = "Demo 4";
 }
-<h2>@ViewBag.Title</h2>
+@using System.Web.UI.WebControls
+@model IEnumerable<Microsoft.Azure.Devices.Device>
+<h2>@ViewBag.Title</h2>     
 
 <div class="row">
     <div class="col-xs-12 h4">
-        <p>Device ID: @ViewData["id"]</p>
-        <p>Device Key: @ViewData["key"]</p>
-    </div>
+        @{
+            List<SelectListItem> listItems = Model.Select(item => new SelectListItem
+            {
+                Text = item.Id, Value = item.Authentication.SymmetricKey.PrimaryKey
+            }).ToList();
 
+        }
+        @Html.DropDownList("Device ID", listItems, new { @id = "form-control" })
+        <br/>
+        <br/>
+    </div>
 </div>
 
 <div class="row">
@@ -32,8 +41,11 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
-        var deviceId = "@ViewData["id"]";
-        var deviceKey = "@ViewData["key"]";
+        console.log( $('#form-control').val($(this).text()));
+
+
+        var deviceId = $('#form-control').Text;
+        var deviceKey = $('#form-control').Value;
 
         //Disable the Send button in case we don't have a deviceID and deviceKey
         $("#btnSend").prop("disabled", (deviceId == ""));

@@ -1,26 +1,74 @@
 ﻿@{
-    ViewBag.Title = "Admin";
+    ViewBag.Title = "Administration";
 }
+@model IEnumerable<Microsoft.Azure.Devices.Device>
 <h2>@ViewBag.Title</h2>
 
+<div class="row">
+    @{
+        List<SelectListItem> listItems = Model.Select(item => new SelectListItem
+        {
+            Text = item.Id,
+            Value = item.Authentication.SymmetricKey.PrimaryKey
+        }).ToList();
+    }
 
+    <table class="table" id="tbody">
+        <tr>
+            <td>#</td>
+            <td>Device Id</td>
+            <td>Device Key</td>
+            <td>Actions</td>
+        </tr>
+        @{
+            int i = 1;
+            foreach (var item in listItems)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.Text</td>
+                    <td>@item.Value</td>
+                    <td>
+                        <button type="button" class="btn btn-danger" id="btnDeleteDevice">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                i++;
+            }
+        }
+    </table>
+
+</div>
 <button type="button" class="btn btn-danger" id="btnDeleteAllDevices" >
     Delete all devices
 </button>
+<button type="button" class="btn btn-success" id="btnCreateDevice">
+    Create device
+</button>
 
+<script type="text/javascript">
+    $(document).ready(function () {
 
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            $("#btnDeleteAllDevices").click(function () {
-                $.ajax({
-                    url: '/Home/DeleteAllDevices/'
-                }).done(function () {
-                    alert('All devices are deleted');
-                }).fail(function (jqXHR, textStatus) {
-                    alert('Something went wrong');
-                });
+        $("#btnDeleteAllDevices").click(function () {
+            $.ajax({
+                url: '/Home/DeleteAllDevices/'
+            }).done(function () {
+                alert('All devices are deleted');
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong' + textStatus);
             });
         });
-    </script>
+
+        $("#btnCreateDevice").click(function () {
+            $.ajax({
+                url: '/Home/AddDevice/'
+            }).done(function (data) {
+                console.log(data);
+                $('#tbody').append("<tr><td>" + data.deviceNbr + "</td><td>" + data.Id + "</td><td>" + data.Key + "</td><td>les actions</td></tr>");
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong' + textStatus);
+            });
+        });
+    });
+</script>

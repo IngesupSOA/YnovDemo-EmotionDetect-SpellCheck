@@ -225,8 +225,15 @@ namespace WebDevice.Controllers
 
         public async Task<ActionResult> Demo4()
         {
-            await AddDeviceAsync();
-            return View();
+            IEnumerable<Device> devices = await registryManager.GetDevicesAsync(1000);
+            if (!devices.Any())
+            {
+                await AddDeviceAsync();
+                devices = await registryManager.GetDevicesAsync(1000);
+            }
+            ViewData["list"] = devices.ToList();
+
+            return View(devices);
         }
 
         [HttpGet]
@@ -273,12 +280,14 @@ namespace WebDevice.Controllers
         }
         #endregion
 
-
         #region Admin
 
-        public ActionResult Admin()
+        public async Task<ActionResult> Admin()
         {
-            return View();
+            List<Device> devices = (await registryManager.GetDevicesAsync(1000)).ToList();
+
+            devices.Sort((d1, d2) => String.Compare(d1.Id, d2.Id, StringComparison.Ordinal));
+            return View(devices);
         }
 
         [HttpGet]
@@ -290,13 +299,28 @@ namespace WebDevice.Controllers
             return null;
         }
 
-        private async Task AddDeviceAsync()
+        [HttpGet]
+        public async Task<ActionResult> AddDevice()
+        {
+            return await AddDeviceAsync();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> DeleteDevice()
+        {
+            // TODO Some shit
+            return null;
+        } 
+
+        private async Task<ActionResult> AddDeviceAsync()
         {
 
-            var deviceGuid = Guid.NewGuid();          
-
+            var deviceGuid = Guid.NewGuid();
+                     
             var devices = await registryManager.GetDevicesAsync(1000);
-            string deviceId = "Device" + (devices.Count<Device>() + 1) + "-" + deviceGuid.ToString();
+
+            int numDevice = devices.Count<Device>() + 1;
+            string deviceId = "Device-" + numDevice.ToString("D6") + "-" + deviceGuid.ToString();
 
             var device = await registryManager.GetDeviceAsync(deviceId);
 
@@ -309,6 +333,14 @@ namespace WebDevice.Controllers
             ViewData["id"] = device.Id;
             ViewData["key"] = device.Authentication.SymmetricKey.PrimaryKey;
 
+            var returnD = new
+            {
+                deviceNbr = numDevice,
+                Id = device.Id,
+                Key = device.Authentication.SymmetricKey.PrimaryKey
+            };
+
+            return Json(returnD, JsonRequestBehavior.AllowGet);
         }
 
         private async Task DeleteAllDevicesAsync()
