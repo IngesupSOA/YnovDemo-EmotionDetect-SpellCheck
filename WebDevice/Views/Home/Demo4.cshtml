@@ -9,7 +9,6 @@
         @Html.DropDownList("ddl", new SelectList((System.Collections.IEnumerable) ViewData["devices"], "Authentication.SymmetricKey.PrimaryKey", "Id"), new { @id = "selectedDevice" })
         <br/>
     </div>
-
 </div>
 
 <div class="row">
@@ -34,6 +33,10 @@
     $(document).ready(function() {
         var deviceId = "";
         var deviceKey = "";
+
+
+        var deviceId = $('#form-control').Text;
+        var deviceKey = $('#form-control').Value;
 
         //Disable the Send button in case we don't have a deviceID and deviceKey
         //$("#btnSend").prop("disabled", (deviceId == ""));

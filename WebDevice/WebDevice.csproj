@@ -255,6 +255,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\BouhWebApp.pubxml" />
+    <None Include="Properties\PublishProfiles\TestTr - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\WebDevice20160918045540 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\WebDevice20170211071232 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\WebDeviceYnov - Web Deploy.pubxml" />
@@ -307,6 +308,9 @@
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-3.1.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.0.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
