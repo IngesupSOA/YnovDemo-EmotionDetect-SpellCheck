@@ -306,9 +306,11 @@ namespace WebDevice.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> DeleteDevice()
+        public async Task<ActionResult> DeleteDevice(string pId)
         {
-            // TODO Some shit
+            Device device = await registryManager.GetDeviceAsync(pId);
+            await registryManager.RemoveDeviceAsync(device);
+
             return null;
         } 
 

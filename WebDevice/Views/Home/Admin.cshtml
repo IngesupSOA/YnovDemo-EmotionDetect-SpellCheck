@@ -15,26 +15,22 @@
 
     <table class="table" id="tbody">
         <tr>
-            <td>#</td>
             <td>Device Id</td>
             <td>Device Key</td>
             <td>Actions</td>
         </tr>
         @{
-            int i = 1;
             foreach (var item in listItems)
             {
-                <tr>
-                    <td>@i</td>
+                <tr id=@item.Text>
                     <td>@item.Text</td>
                     <td>@item.Value</td>
                     <td>
-                        <button type="button" class="btn btn-danger" id="btnDeleteDevice">
+                        <button type="button" class="btn btn-danger btnDeleteDevice" data-deviceId=@item.Text>
                             Delete
                         </button>
                     </td>
                 </tr>
-                i++;
             }
         }
     </table>
@@ -50,22 +46,45 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
+        // Delete all device
         $("#btnDeleteAllDevices").click(function () {
             $.ajax({
                 url: '/Home/DeleteAllDevices/'
             }).done(function () {
-                alert('All devices are deleted');
+                location.reload();
             }).fail(function (jqXHR, textStatus) {
                 alert('Something went wrong' + textStatus);
             });
         });
 
+        // Create a device
         $("#btnCreateDevice").click(function () {
+            $('#btnCreateDevice').button('loading');
+
             $.ajax({
                 url: '/Home/AddDevice/'
             }).done(function (data) {
-                console.log(data);
-                $('#tbody').append("<tr><td>" + data.deviceNbr + "</td><td>" + data.Id + "</td><td>" + data.Key + "</td><td>les actions</td></tr>");
+                $('#tbody').append("<tr id=\"" + data.Id + "\"><td>" + data.Id + "</td><td>" + data.Key + "</td><td>" +
+                    "<button type=\"button\" class=\"btn btn-danger btnDeleteDevice\" data-deviceId=\"" + data.Id + "\">Delete</button></td></tr>");
+                $('#btnCreateDevice').button('reset');
+                location.reload();
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong' + textStatus);
+            });
+
+            
+        });
+
+        // delete a device
+        $(".btnDeleteDevice").click(function () {
+            var deviceId = $(this).attr("data-deviceId");
+
+            console.log(deviceId);
+            $.ajax({
+                url: '/Home/DeleteDevice/',
+                data: {pId: deviceId}
+            }).done(function () {
+                $('#' + deviceId).remove();
             }).fail(function (jqXHR, textStatus) {
                 alert('Something went wrong' + textStatus);
             });
