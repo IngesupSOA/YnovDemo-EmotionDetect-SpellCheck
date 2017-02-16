@@ -56,7 +56,7 @@
             }).done(function () {
                 alert('All devices are deleted');
             }).fail(function (jqXHR, textStatus) {
-                alert('Something went wrong' + textStatus);
+                alert('Something went wrong');
             });
         });
 
@@ -67,7 +67,7 @@
                 console.log(data);
                 $('#tbody').append("<tr><td>" + data.deviceNbr + "</td><td>" + data.Id + "</td><td>" + data.Key + "</td><td>les actions</td></tr>");
             }).fail(function (jqXHR, textStatus) {
-                alert('Something went wrong' + textStatus);
+                alert('Something went wrong');
             });
         });
     });

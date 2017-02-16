@@ -13,12 +13,12 @@ using System.Net.Http.Headers;
 using System.Web;
 using System.Globalization;
 using WebDevice.Models;
+using Message = Microsoft.Azure.Devices.Client.Message;
 
 namespace WebDevice.Controllers
 {
     public class HomeController : Controller
     {
-
         private static RegistryManager registryManager;
         private static string iotHubConnectionString = ConfigurationManager.AppSettings["iotHubConnectionString"];
         private string iotHubUri = ConfigurationManager.AppSettings["iotHubUri"];
@@ -28,6 +28,8 @@ namespace WebDevice.Controllers
         private static string EmotionKey = ConfigurationManager.AppSettings["emotionKey"];
         private static string BingSpellKey = ConfigurationManager.AppSettings["bingSpellKey"];
         private const int NumLanguages = 1;
+
+        public string ReceivedMsg { get; set; }
 
         static HomeController()
         {
@@ -39,7 +41,6 @@ namespace WebDevice.Controllers
             return View();
         }
 
-
         #region Demo 1
 
         public async Task<ActionResult> Demo1()
@@ -48,17 +49,12 @@ namespace WebDevice.Controllers
             return View();
         }
 
-        [HttpGet]
-        public async Task<ActionResult> SendMessage(string id, string key, int value)
+        [HttpGet] public async Task<ActionResult> SendMessage(string id, string key, int value)
         {
-            var telemetryDataPoint = new
-            {
-                deviceId = id,
-                telemetry = value
-            };
+            var telemetryDataPoint = new {deviceId = id, telemetry = value};
 
             var messageString = JsonConvert.SerializeObject(telemetryDataPoint);
-            var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(messageString));
+            var message = new Message(Encoding.ASCII.GetBytes(messageString));
 
             var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
 
@@ -78,35 +74,34 @@ namespace WebDevice.Controllers
             return View();
         }
 
-        [HttpGet]
-        public async Task<ActionResult> SendComment(string id, string key, string value)
+        [HttpGet] public async Task<ActionResult> SendComment(string id, string key, string value)
         {
-
             var _language = await DetectLanguage(value);
             var _sentiment = await DetectSentiment(value);
 
             dynamic _languageConverted = JsonConvert.DeserializeObject(_language);
             dynamic _sentimentConverted = JsonConvert.DeserializeObject(_sentiment);
 
-            var commentDataPoint = new
-            {
-                deviceId = id,
-                comment = value,
-                language = _languageConverted.documents[0].detectedLanguages[0].name.ToString(),
-                languageScore = float.Parse(_languageConverted.documents[0].detectedLanguages[0].score.ToString()),
-                sentiment = float.Parse(_sentimentConverted.documents[0].score.ToString())
-            };
+            var commentDataPoint =
+                new
+                {
+                    deviceId = id,
+                    comment = value,
+                    language = _languageConverted.documents[0].detectedLanguages[0].name.ToString(),
+                    languageScore = float.Parse(_languageConverted.documents[0].detectedLanguages[0].score.ToString()),
+                    sentiment = float.Parse(_sentimentConverted.documents[0].score.ToString())
+                };
 
             var commentString = JsonConvert.SerializeObject(commentDataPoint);
-            var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
+            var message = new Message(Encoding.ASCII.GetBytes(commentString));
 
             var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
 
             await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            return Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
-
+            return Json(commentDataPoint, JsonRequestBehavior.AllowGet);
+            ; // Json(commentDataPoint);
         }
 
         static async Task<string> DetectLanguage(string comment)
@@ -120,9 +115,8 @@ namespace WebDevice.Controllers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 // Request body. Insert your text data here in JSON format.
-                byte[] byteData = Encoding.UTF8.GetBytes("{\"documents\":[" +
-                    "{\"id\":\"1\",\"text\":\"" + comment + "\"}" +
-                    "]}");
+                byte[] byteData =
+                    Encoding.UTF8.GetBytes("{\"documents\":[" + "{\"id\":\"1\",\"text\":\"" + comment + "\"}" + "]}");
 
                 // Detect language:
                 var queryString = HttpUtility.ParseQueryString(string.Empty);
@@ -145,9 +139,8 @@ namespace WebDevice.Controllers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 // Request body. Insert your text data here in JSON format.
-                byte[] byteData = Encoding.UTF8.GetBytes("{\"documents\":[" +
-                    "{\"id\":\"1\",\"text\":\"" + comment + "\"}" +
-                    "]}");
+                byte[] byteData =
+                    Encoding.UTF8.GetBytes("{\"documents\":[" + "{\"id\":\"1\",\"text\":\"" + comment + "\"}" + "]}");
 
                 // Detect sentiment:
                 var uri = "text/analytics/v2.0/sentiment";
@@ -167,8 +160,7 @@ namespace WebDevice.Controllers
             return View();
         }
 
-        [HttpGet]
-        public async Task<string> SendText(string id, string key, string txt)
+        [HttpGet] public async Task<string> SendText(string id, string key, string txt)
         {
             var corrected = await CorrectText(txt);
 
@@ -233,19 +225,18 @@ namespace WebDevice.Controllers
             }
             ViewData["devices"] = devices;
             devices.Sort((d1, d2) => d1.Id.CompareTo(d2.Id));
+            ViewData["DeviceMessage"] = new List<string>();
             return View(devices);
         }
 
-        [HttpGet]
-        public async Task<string> SendImage(string id, string key, string url)
+        [HttpGet] public async Task<string> SendImage(string id, string key, string url)
         {
-
             var sentiment = await DetectEmotions(url);
 
             //dynamic sentimentConverted = JsonConvert.DeserializeObject<EmotionModel>(sentiment);
 
             //var commentString = JsonConvert.SerializeObject(commentDataPoint);
-            var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(sentiment));
+            var message = new Message(Encoding.ASCII.GetBytes(sentiment));
 
             var deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(id, key));
 
@@ -254,7 +245,6 @@ namespace WebDevice.Controllers
             Response.StatusCode = 200; // OK = 200
             return sentiment;
             //Json(commentDataPoint, JsonRequestBehavior.AllowGet); ; // Json(commentDataPoint);
-
         }
 
         static async Task<string> DetectEmotions(string url)
@@ -278,6 +268,7 @@ namespace WebDevice.Controllers
                 return response;
             }
         }
+
         #endregion
 
         #region Admin
@@ -290,8 +281,7 @@ namespace WebDevice.Controllers
             return View(devices);
         }
 
-        [HttpGet]
-        public async Task<ActionResult> DeleteAllDevices()
+        [HttpGet] public async Task<ActionResult> DeleteAllDevices()
         {
             await DeleteAllDevicesAsync();
 
@@ -299,24 +289,21 @@ namespace WebDevice.Controllers
             return null;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> AddDevice()
+        [HttpGet] public async Task<ActionResult> AddDevice()
         {
             return await AddDeviceAsync();
         }
 
-        [HttpGet]
-        public async Task<ActionResult> DeleteDevice()
+        [HttpGet] public async Task<ActionResult> DeleteDevice()
         {
             // TODO Some shit
             return null;
-        } 
+        }
 
         private async Task<ActionResult> AddDeviceAsync()
         {
-
             var deviceGuid = Guid.NewGuid();
-                     
+
             var devices = await registryManager.GetDevicesAsync(1000);
 
             int numDevice = devices.Count<Device>() + 1;
@@ -333,12 +320,8 @@ namespace WebDevice.Controllers
             ViewData["id"] = device.Id;
             ViewData["key"] = device.Authentication.SymmetricKey.PrimaryKey;
 
-            var returnD = new
-            {
-                deviceNbr = numDevice,
-                Id = device.Id,
-                Key = device.Authentication.SymmetricKey.PrimaryKey
-            };
+            var returnD =
+                new {deviceNbr = numDevice, Id = device.Id, Key = device.Authentication.SymmetricKey.PrimaryKey};
 
             return Json(returnD, JsonRequestBehavior.AllowGet);
         }
@@ -347,8 +330,7 @@ namespace WebDevice.Controllers
         {
             var devices = await registryManager.GetDevicesAsync(1000);
 
-            if (devices.Count<Device>() > 0)
-                await registryManager.RemoveDevices2Async(devices);
+            if (devices.Count<Device>() > 0) await registryManager.RemoveDevices2Async(devices);
         }
 
         static async Task<String> CallEndpoint(HttpClient client, string uri, byte[] byteData)
@@ -373,5 +355,37 @@ namespace WebDevice.Controllers
 
         #endregion
 
+        [HttpGet] public async Task SendCloudToDeviceAsync(string id)
+        {
+            ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(iotHubConnectionString);
+            Task.Run(() => { ReceiveFeedbackAsync(serviceClient); });
+            var commandMessage = new Microsoft.Azure.Devices.Message(Encoding.ASCII.GetBytes("Cloud to device message."));
+            commandMessage.Ack = Microsoft.Azure.Devices.DeliveryAcknowledgement.Full;
+            await serviceClient.SendAsync(id, commandMessage);
+            Response.StatusCode = 200; // OK = 200
+        }
+
+        private async void ReceiveFeedbackAsync(ServiceClient serviceClient)
+        {
+            var feedbackReceiver = serviceClient.GetFeedbackReceiver();
+
+            ReceivedMsg = "";
+
+            while (true)
+            {
+                var feedbackBatch = await feedbackReceiver.ReceiveAsync();
+                if (feedbackBatch == null) continue;
+
+                ReceivedMsg = string.Join(", ", feedbackBatch.Records.Select(f => f.StatusCode));
+
+                await feedbackReceiver.CompleteAsync(feedbackBatch);
+            }
+        }
+
+        [HttpGet] public async Task<string> GetReceivedMsg()
+        {
+            Response.StatusCode = ReceivedMsg == "" ? 500 : 200;
+            return ReceivedMsg;
+        }
     }
 }

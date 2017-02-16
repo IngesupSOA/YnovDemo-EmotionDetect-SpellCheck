@@ -6,7 +6,10 @@
 
 <div class="row">
     <div class="col-xs-12 h4">
-        @Html.DropDownList("ddl", new SelectList((System.Collections.IEnumerable) ViewData["devices"], "Authentication.SymmetricKey.PrimaryKey", "Id"), new { @id = "selectedDevice" })
+        @Html.DropDownList("ddl", new SelectList((System.Collections.IEnumerable) ViewData["devices"], "Authentication.SymmetricKey.PrimaryKey", "Id"), new {@id = "selectedDevice", @onchange = "DeviceChange()"})
+
+        <button type="button" class="btn btn-primary btn-lg " id="btnPing" data-loading-text="<i class='glyphicon glyphicon-refresh glyphicon-spin'></i> Pinging...">Ping</button>
+        <div id="#pingRes"></div>
         <br/>
     </div>
 </div>
@@ -39,9 +42,14 @@
         var deviceKey = $('#form-control').Value;
 
         //Disable the Send button in case we don't have a deviceID and deviceKey
-        //$("#btnSend").prop("disabled", (deviceId == ""));
+        $("#btnSend").prop("disabled", (deviceId == ""));
 
-        $('#btnSend').click(function () {
+        function DeviceChange() {
+            $("#btnSend").prop("disabled", (deviceId == ""));
+            $("#pingRes").html("");
+        }
+
+        $('#btnSend').click(function() {
             deviceId = $("#selectedDevice :selected")[0].text;
             deviceKey = $("#selectedDevice :selected")[0].value;
             /*$('#btnSend').button('loading');
@@ -54,6 +62,12 @@
                 $('#btnSend').button('reset');
             });*/
             SendComment();
+        });
+
+        $('#btnPing').click(function () {
+            deviceId = $("#selectedDevice :selected")[0].text;
+            deviceKey = $("#selectedDevice :selected")[0].value;
+            SendPing();
         });
 
         function SendComment() {
@@ -74,34 +88,69 @@
                 $("#results").append(subcontainer);
                 var i = 0;
                 img.onload = function() {
-                    $.each(data, function(index, value) {
-                        var div = $("<div class=\"labelbox\" onmouseover=\"showFaceInfo(" + i + ")\" onmouseout=\"hideFaceInfo(" + i + ")\" style=\"" +
-                            "top:" + (parseInt(value.faceRectangle.top) / ((img.naturalWidth / 500) * img.height)) * 100 + "%;" +
-                            "left:" + (parseInt(value.faceRectangle.left) / ((img.naturalWidth / 500) * img.width)) * 100 + "%;" +
-                            "width:" + (parseInt(value.faceRectangle.width) / ((img.naturalWidth / 500) * img.width)) * 100 + "%;" +
-                            "height:" + (parseInt(value.faceRectangle.height) / ((img.naturalWidth / 500) * img.height)) * 100 + "%;\"></div>");
+                    $.each(data,
+                        function(index, value) {
+                            var div = $("<div class=\"labelbox\" onmouseover=\"showFaceInfo(" +
+                                i +
+                                ")\" onmouseout=\"hideFaceInfo(" +
+                                i +
+                                ")\" style=\"" +
+                                "top:" +
+                                (parseInt(value.faceRectangle.top) / ((img.naturalWidth / 500) * img.height)) * 100 +
+                                "%;" +
+                                "left:" +
+                                (parseInt(value.faceRectangle.left) / ((img.naturalWidth / 500) * img.width)) * 100 +
+                                "%;" +
+                                "width:" +
+                                (parseInt(value.faceRectangle.width) / ((img.naturalWidth / 500) * img.width)) * 100 +
+                                "%;" +
+                                "height:" +
+                                (parseInt(value.faceRectangle.height) / ((img.naturalWidth / 500) * img.height)) * 100 +
+                                "%;\"></div>");
 
-                        var faceInfo = $('<span class="faceinfo" id="face' + i + '"' +
-                            'style="top: ' + ((parseInt(value.faceRectangle.top) + parseInt(value.faceRectangle.height))
-                                / ((img.naturalWidth / 500) * img.height)) * 100 +
-                            '%; left: ' + ((parseInt(value.faceRectangle.left) + parseInt(value.faceRectangle.width))
-                                / ((img.naturalWidth / 500) * img.width)) * 100 +
-                            '%; display: none;">' +
-                            '<span data-type="tiparrow" class="tiparrowleft" style="top: 91.5px;"></span>' +
-                            '<span class="facecode">' +
-                            '<p><span>Anger : </span>' + parseFloat(value.scores.anger).toFixed(4) + '</p>' +
-                            '<p><span>Contempt : </span>' + parseFloat(value.scores.contempt).toFixed(4) + '</p>' +
-                            '<p><span>Disgust : </span>' + parseFloat(value.scores.disgust).toFixed(4) + '</p>' +
-                            '<p><span>Fear : </span>' + parseFloat(value.scores.fear).toFixed(4) + '</p>' +
-                            '<p><span>Happiness : </span>' + parseFloat(value.scores.happiness).toFixed(4) + '</p>' +
-                            '<p><span>Neutral : </span>' + parseFloat(value.scores.neutral).toFixed(4) + '</p>' +
-                            '<p><span>Sadness : </span>' + parseFloat(value.scores.sadness).toFixed(4) + '</p>' +
-                            '<p><span>Surprise : </span>' + parseFloat(value.scores.surprise).toFixed(4) + '</p>' +
-                            '</span></span>');
-                        subcontainer.append(faceInfo);
-                        subcontainer.append(div);
-                        i = i + 1;
-                    });
+                            var faceInfo = $('<span class="faceinfo" id="face' +
+                                i +
+                                '"' +
+                                'style="top: ' +
+                                ((parseInt(value.faceRectangle.top) + parseInt(value.faceRectangle.height)) /
+                                    ((img.naturalWidth / 500) * img.height)) *
+                                100 +
+                                '%; left: ' +
+                                ((parseInt(value.faceRectangle.left) + parseInt(value.faceRectangle.width)) /
+                                    ((img.naturalWidth / 500) * img.width)) *
+                                100 +
+                                '%; display: none;">' +
+                                '<span data-type="tiparrow" class="tiparrowleft" style="top: 91.5px;"></span>' +
+                                '<span class="facecode">' +
+                                '<p><span>Anger : </span>' +
+                                parseFloat(value.scores.anger).toFixed(4) +
+                                '</p>' +
+                                '<p><span>Contempt : </span>' +
+                                parseFloat(value.scores.contempt).toFixed(4) +
+                                '</p>' +
+                                '<p><span>Disgust : </span>' +
+                                parseFloat(value.scores.disgust).toFixed(4) +
+                                '</p>' +
+                                '<p><span>Fear : </span>' +
+                                parseFloat(value.scores.fear).toFixed(4) +
+                                '</p>' +
+                                '<p><span>Happiness : </span>' +
+                                parseFloat(value.scores.happiness).toFixed(4) +
+                                '</p>' +
+                                '<p><span>Neutral : </span>' +
+                                parseFloat(value.scores.neutral).toFixed(4) +
+                                '</p>' +
+                                '<p><span>Sadness : </span>' +
+                                parseFloat(value.scores.sadness).toFixed(4) +
+                                '</p>' +
+                                '<p><span>Surprise : </span>' +
+                                parseFloat(value.scores.surprise).toFixed(4) +
+                                '</p>' +
+                                '</span></span>');
+                            subcontainer.append(faceInfo);
+                            subcontainer.append(div);
+                            i = i + 1;
+                        });
                 };
                 img.width = 500;
                 img.src = $("#txtComment").val();
@@ -112,6 +161,48 @@
             });
 
         }
+
+        function SendPing() {
+            $('#btnPing').button('loading');
+            $("#pingRes").html("");
+            $.ajax({
+                url: '/Home/SendCloudToDeviceAsync/',
+                data: { id: deviceId }
+            }).done(function (data) {
+                setTimeout(GetPing, 1000);
+            }).fail(function(jqXHR, textStatus) {
+                console.log('Something went wrong');
+                $('#btnPing').button('not answer');
+            });
+        }
+
+        function GetPing() {
+            $('#btnPing').button('pinging');
+            $.ajax({
+                url: '/Home/GetReceivedMsg/',
+                data: { id: deviceId }
+            }).done(function (data) {
+                console.log(data);
+                $('#btnPing').button('reset');
+                $("#pingRes").html("Pinged!");
+            }).fail(function (jqXHR, textStatus) {
+                console.log('Something went wrong');
+                $('#btnPing').button('not answer');
+            });
+        }
+
+        /*(function worker() {
+            $.ajax({
+                url: '/Home/ReceiveMessageAssync/',
+                data: { id: deviceId, key: deviceKey }
+            }).done(function(data) {
+                console.log(data);
+                setTimeout(worker, 5000);
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong');
+                setTimeout(worker, 5000);
+            });
+        })();*/
     });
 
     function showFaceInfo(id) {

@@ -56,5 +56,7 @@ namespace ReadMessages
                 Console.WriteLine("Message received. Partition: {0} Data: '{1}'", partition, data);
             }
         }
+
+
     }
 }
