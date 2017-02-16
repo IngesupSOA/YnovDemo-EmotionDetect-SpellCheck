@@ -164,14 +164,14 @@ namespace WebDevice.Controllers
         {
             var corrected = await CorrectText(txt);
 
-            /*APIModels check = JsonConvert.DeserializeObject<APIModels>(corrected);
+            APIModels check = JsonConvert.DeserializeObject<APIModels>(corrected);
             string correctedText = txt;
 
             foreach (FlaggedToken correction in check.flaggedTokens)
             {
                 correctedText = correctedText.Replace(correction.token, correction.suggestions.ToList()[0].suggestion);
                 Console.WriteLine(correction.suggestions.ToList()[0].suggestion);
-            }*/
+            }
 
             //var commentString = JsonConvert.SerializeObject(commentDataPoint);
             //var message = new Microsoft.Azure.Devices.Client.Message(Encoding.ASCII.GetBytes(commentString));
@@ -181,10 +181,10 @@ namespace WebDevice.Controllers
             //await deviceClient.SendEventAsync(message);
 
             Response.StatusCode = 200; // OK = 200
-            //return correctedText;
+            return correctedText;
             //return Json(check, JsonRequestBehavior.AllowGet);
             //return JsonConvert.SerializeObject(check.flaggedTokens);
-            return corrected;
+            //return corrected;
         }
 
         static async Task<string> CorrectText(string txt)
@@ -294,9 +294,12 @@ namespace WebDevice.Controllers
             return await AddDeviceAsync();
         }
 
-        [HttpGet] public async Task<ActionResult> DeleteDevice()
+        [HttpGet]
+        public async Task<ActionResult> DeleteDevice(string pId)
         {
-            // TODO Some shit
+            Device device = await registryManager.GetDeviceAsync(pId);
+            await registryManager.RemoveDeviceAsync(device);
+
             return null;
         }
 

@@ -19,19 +19,17 @@
         <textarea id="txtComment" rows="2" cols="50"></textarea><br/>
 
 
-        <button type="button" class="btn btn-primary btn-lg " id="btnSend" data-loading-text="<i class='glyphicon glyphicon-refresh glyphicon-spin'></i> Thinking...">Analyze Text</button>
+        <button type="button" class="btn btn-primary btn-lg " id="btnSend" data-loading-text="<i class='glyphicon glyphicon-refresh glyphicon-spin'></i> Thinking...">Analyze picture</button>
+    </div>
+    <div class="col-md-4">
+
+            <div id="results" width="500px" style="display: inline-block; position: absolute;">
+            </div>
+
     </div>
 </div>
 <hr/>
 <br/>
-<div class="row">
-    <div class="col-xs-12" style="display: inline-block;">
-        <div id="results" width="500px" style="display: inline-block; position: absolute;">
-        </div>
-    </div>
-</div>
-
-
 <script type="text/javascript">
     $(document).ready(function() {
         var deviceId = "";
