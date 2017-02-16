@@ -1,21 +1,12 @@
 ﻿@{
     ViewBag.Title = "Demo 4";
 }
-@using System.Web.UI.WebControls
 @model IEnumerable<Microsoft.Azure.Devices.Device>
-<h2>@ViewBag.Title</h2>     
+<h2>@ViewBag.Title</h2>
 
 <div class="row">
     <div class="col-xs-12 h4">
-        @{
-            List<SelectListItem> listItems = Model.Select(item => new SelectListItem
-            {
-                Text = item.Id, Value = item.Authentication.SymmetricKey.PrimaryKey
-            }).ToList();
-
-        }
-        @Html.DropDownList("Device ID", listItems, new { @id = "form-control" })
-        <br/>
+        @Html.DropDownList("ddl", new SelectList((System.Collections.IEnumerable) ViewData["devices"], "Authentication.SymmetricKey.PrimaryKey", "Id"), new { @id = "selectedDevice" })
         <br/>
     </div>
 </div>
@@ -28,7 +19,7 @@
         <button type="button" class="btn btn-primary btn-lg " id="btnSend" data-loading-text="<i class='glyphicon glyphicon-refresh glyphicon-spin'></i> Thinking...">Analyze Text</button>
     </div>
 </div>
-<hr />
+<hr/>
 <br/>
 <div class="row">
     <div class="col-xs-12" style="display: inline-block;">
@@ -40,17 +31,28 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-
-        console.log( $('#form-control').val($(this).text()));
+        var deviceId = "";
+        var deviceKey = "";
 
 
         var deviceId = $('#form-control').Text;
         var deviceKey = $('#form-control').Value;
 
         //Disable the Send button in case we don't have a deviceID and deviceKey
-        $("#btnSend").prop("disabled", (deviceId == ""));
+        //$("#btnSend").prop("disabled", (deviceId == ""));
 
-        $('#btnSend').click(function() {
+        $('#btnSend').click(function () {
+            deviceId = $("#selectedDevice :selected")[0].text;
+            deviceKey = $("#selectedDevice :selected")[0].value;
+            /*$('#btnSend').button('loading');
+            $.ajax({
+                url: '/Home/DeleteAllDevicesAsync/'
+            }).done(function(data) {
+                $('#btnSend').button('reset');
+            }).fail(function(jqXHR, textStatus) {
+                $("#results").html("An error occured");
+                $('#btnSend').button('reset');
+            });*/
             SendComment();
         });
 
@@ -72,7 +74,7 @@
                 $("#results").append(subcontainer);
                 var i = 0;
                 img.onload = function() {
-                    $.each(data, function (index, value) {
+                    $.each(data, function(index, value) {
                         var div = $("<div class=\"labelbox\" onmouseover=\"showFaceInfo(" + i + ")\" onmouseout=\"hideFaceInfo(" + i + ")\" style=\"" +
                             "top:" + (parseInt(value.faceRectangle.top) / ((img.naturalWidth / 500) * img.height)) * 100 + "%;" +
                             "left:" + (parseInt(value.faceRectangle.left) / ((img.naturalWidth / 500) * img.width)) * 100 + "%;" +
@@ -81,9 +83,9 @@
 
                         var faceInfo = $('<span class="faceinfo" id="face' + i + '"' +
                             'style="top: ' + ((parseInt(value.faceRectangle.top) + parseInt(value.faceRectangle.height))
-                            / ((img.naturalWidth / 500) * img.height)) * 100 +
+                                / ((img.naturalWidth / 500) * img.height)) * 100 +
                             '%; left: ' + ((parseInt(value.faceRectangle.left) + parseInt(value.faceRectangle.width))
-                            / ((img.naturalWidth / 500) * img.width)) * 100 +
+                                / ((img.naturalWidth / 500) * img.width)) * 100 +
                             '%; display: none;">' +
                             '<span data-type="tiparrow" class="tiparrowleft" style="top: 91.5px;"></span>' +
                             '<span class="facecode">' +
@@ -115,6 +117,7 @@
     function showFaceInfo(id) {
         $('#face' + id).css("display", "block");
     }
+
     function hideFaceInfo(id) {
         $('#face' + id).css("display", "none");
     }

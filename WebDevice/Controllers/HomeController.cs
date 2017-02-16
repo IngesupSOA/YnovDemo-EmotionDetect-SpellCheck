@@ -199,14 +199,14 @@ namespace WebDevice.Controllers
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(BaseUrl);
+                //client.BaseAddress = new Uri(BaseUrl);
 
                 // Request headers.
                 client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", BingSpellKey);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
 
                 // Request body. Insert your text data here in JSON format.
-                byte[] byteData = Encoding.UTF8.GetBytes("Text=" + txt);
+                byte[] byteData = Encoding.UTF8.GetBytes("text=" + txt.Replace(" ", "+"));
 
                 // Detect language:
                 var queryString = HttpUtility.ParseQueryString(string.Empty);
@@ -225,14 +225,14 @@ namespace WebDevice.Controllers
 
         public async Task<ActionResult> Demo4()
         {
-            IEnumerable<Device> devices = await registryManager.GetDevicesAsync(1000);
+            List<Device> devices = (await registryManager.GetDevicesAsync(10)).ToList();
             if (!devices.Any())
             {
                 await AddDeviceAsync();
-                devices = await registryManager.GetDevicesAsync(1000);
+                devices = (await registryManager.GetDevicesAsync(10)).ToList();
             }
-            ViewData["list"] = devices.ToList();
-
+            ViewData["devices"] = devices;
+            devices.Sort((d1, d2) => d1.Id.CompareTo(d2.Id));
             return View(devices);
         }
 
@@ -351,7 +351,6 @@ namespace WebDevice.Controllers
 
             if (devices.Count<Device>() > 0)
                 await registryManager.RemoveDevices2Async(devices);
-
         }
 
         static async Task<String> CallEndpoint(HttpClient client, string uri, byte[] byteData)
