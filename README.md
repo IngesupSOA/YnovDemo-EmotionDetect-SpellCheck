@@ -50,10 +50,10 @@ Then, go to Stream Analytics Job overview and add new Input :
 
 Add new Output :
 
--<i></i> Ouput : name it
--<i></i> Sink : Power BI -> Sign in
--<i></i> Dataset Name : name it
--<i></i> Table Name : name it
+- <i></i> Ouput : name it
+- <i></i> Sink : Power BI -> Sign in
+- <i></i> Dataset Name : name it
+- <i></i> Table Name : name it
 
 Add query :
 ```sql
@@ -94,3 +94,6 @@ The picture is diplayed with square arround faces, if you put your muse over fac
 Connect to your Power Bi account -> Streaming Datatsets
 Here you can see your DataSet name, clique on chart icon
 You can make your chart easily !
+
+Ex :
+![Power BI Exemple](https://github.com/IngesupSOA/YnovDemo-EmotionDetect-SpellCheck/blob/master/imgExemple/2017-03-09_12h28_38.jpg)
