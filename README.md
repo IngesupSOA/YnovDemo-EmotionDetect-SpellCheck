@@ -95,5 +95,4 @@ Connect to your Power Bi account -> Streaming Datatsets
 Here you can see your DataSet name, clique on chart icon
 You can make your chart easily !
 
-Ex :
 ![Power BI Exemple](https://github.com/IngesupSOA/YnovDemo-EmotionDetect-SpellCheck/blob/master/imgExemple/2017-03-09_12h28_38.jpg)
