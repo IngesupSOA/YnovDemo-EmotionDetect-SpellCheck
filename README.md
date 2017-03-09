@@ -24,6 +24,7 @@ Sign in with your azure account and then install :
 #### <i class="icon-hdd"></i> Installation
 On your portal azure, go on your Web App overview -> Application settings.
 Add these news app settings value and save changes :
+
 Key                   | Value
 --------              | ---
 iotHubConnectionString| <#value>
@@ -91,18 +92,5 @@ The picture is diplayed with square arround faces, if you put your muse over fac
 
 #### <i class="icon-file"></i>Power BI Analysis
 Connect to your Power Bi account -> Streaming Datatsets
-Here you can see your DataSet name, clique on : <#img>
+Here you can see your DataSet name, clique on chart icon
 You can make your chart easily !
-
-#### <i class="icon-hdd"></i>Architecture
-
-```flow
-st=>start: WebApp
-e=>end
-op=>operation: Iot Hub
-op2=>operation: Stream Analytics job
-op3=>operation: PowerBi
-
-st->op->op2->op3
-
-```
